@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        background-color:cadetblue;
+      }
+      .butto {
+      position: absolute;
+      right: 0px;
+        top:0px;
+        float:right;
+       }
+       .butto1 {
+      position: absolute;
+      left: 0px;
+        top:0px;
+        float:left;
+       }
+      div{
+        text-align: center;
+      }
+      img {
+        margin: 70px;
+      }
+      button {
+        position: relative;
+      }
+      .but {
+        position: fixed;
+      }
+      .task-title,
+      .task-content {
+        text-align: center;
+      }
+      .task{
+        position: relative;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      <div id="app">
+        <div text-align="center">
+          <h2>MY TODO</h2>
+        </div>
+        <div class="d-flex justify-content-center align-items-center mb-5">
+          <div>
+            <input
+              v-model="title"
+              class="d-block mb-3 w-100"
+              type="text"
+              placeholder="Title"
+              minlength="1"
+            />
+            <textarea
+              v-model="content"
+              required
+              class="w-100 mb-3"
+              name="comment "
+              placeholder="Content"
+              minlength="1"
+            ></textarea>
+            <div class="row">
+              <div class="col-4">
+                <form>
+                  <input
+                    class="d-block mb-3"
+                    type="number"
+                    placeholder="font-size"
+                    min="1"
+                    v-model="fontSize"
+                  />
+                </form>
+                <div clas="row">
+                  </button>
+                </div>
+              </div>
+              <div class="col-4">
+                <form>
+                  <input
+                    class="d-block mb-3"
+                    type="text"
+                    placeholder="Color"
+                    minlength="1"
+                    v-model="Color"
+                  />
+                </form>
+                <form>
+                  <button 
+                    @click="addTask()" @keyup.enter="addTask()"
+                    type="button"
+                    class="btn btn-primary btn-lg btn-block"
+                    
+                 >
+                    ADD
+                  </button>
+                  <div class="d-flex justify-content-center align-items-center mb-5">
+                    </button>
+                    </button>
+                  </div>
+                </form>
+                <br />
+              </div>
+              <div class="col-4">
+                <input class="d-block mb-3" type="text" placeholder="BgColor" v-model="BgColor"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4 bg-primary">
+            <h2>To do </h2>
+            <tempate v-for="(task, i) in toDo" :key="i">
+              <div
+                class="task m-3 p-2"
+                :style="[{'background': BgColor}]"
+              >
+              <button @click="array(i, 'inp')"
+                       type="button"
+                      class="btn btn-secondary btn-lg butto">
+                      &rarr;</button>
+                      <div v-bind:style="{ color: Color, fontSize: fontSize + 'px', background: BgColor}"style="min-height:50px;">
+                        <div class="task-title"><b>{{ task.title }}</b></div>
+                        <div class="task-content">{{ task.content }}</div>
+                      </div>
+              </div>
+            </tempate>
+          </div>
+          <div class="col-4 bg-warning">
+            <h2>In progress</h2>
+            <template v-for="(task ,i) in inProgress" :key="i">
+              <div class="task m-3 p-2"   :style="[{'background': BgColor}]">
+                <div :style="{ color: Color, fontSize: fontSize + 'px', background: BgColor}"style="min-height:50px;">  
+                      <div class="tasksclear-titlec" >
+                        <button @click="array(i, 'don')"
+                    type="button"
+                  class="btn btn-secondary btn-lg butto">
+                  &rarr;</button><b>{{ task.title }} </b><button @click="array(i,'tod')"
+                  type="button"
+                  class="btn btn-secondary btn-lg butto1">
+                  &larr;</button></div>
+                      <div class="tasksclear-contentc">{{ task.content }}</div>
+                    </div>
+            </div> 
+          </template>
+          </div>
+          <div class="col-4 bg-success">
+            <h2>Done</h2>
+            <template v-for="(task ,i) in done" :key="i">
+                  <div class="task m-3 p-2"   :style="[{'background': BgColor}]">
+                    <div v-bind:style="{ color: Color, fontSize: fontSize + 'px', background: BgColor}"style="min-height:50px;">  
+                    <div class="tasksclear-titlec" style="min-width:180px">
+                    <button @click="array(i, 'inp1')"
+                    type="button"
+                  class="btn btn-secondary btn-lg butto1">
+                  &larr;</button><b>{{ task.title }} </b>
+                    </div>
+                  <div class="tasksclear-contentc">{{ task.content }}</div>
+                  </div>
+              </div>
+              </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        toDo: [],
+        inProgress: [],
+        done:[],
+        title: '',
+        content: '',
+        fontSize: '',
+        Color: '',
+        BgColor:'',
+    },
+      methods: {
+        addTask() {
+          if(!this.title || !this.content && !this.BgColor ){
+            return
+          }else{
+            this.toDo.push({ title: this.title, content: this.content, fontSize: this.fontSize +"px" });
+            this.title = this.content = '';
+          }
+        },     
+        array(i, name){
+          if(name === 'inp'){
+          this.inProgress.push(this.toDo[i]);
+          this.toDo.splice(i, 1)
+          }
+          if(name === 'don'){
+          this.done.push(this.inProgress[i]);
+          this.inProgress.splice(i, 1)
+          }
+          if(name === 'inp1'){
+          this.inProgress.push(this.done[i]);
+          this.done.splice(i, 1)
+          }
+          if(name === 'tod'){
+          this.toDo.push(this.inProgress[i]);
+          this.inProgress.splice(i, 1)
+          }
+      },
+    },
+  })
+  </script>
+</html>
